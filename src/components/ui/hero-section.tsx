@@ -1,8 +1,48 @@
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, GraduationCap } from "lucide-react"
+import { ArrowRight, GraduationCap, ChevronLeft, ChevronRight } from "lucide-react"
 import heroImage from "@/assets/hero-students.jpg"
 
+const carouselImages = [
+  {
+    src: heroImage,
+    alt: "Students studying in Germany",
+    caption: "Students at German Universities"
+  },
+  {
+    src: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop",
+    alt: "UK University Campus",
+    caption: "UK University Campus"
+  },
+  {
+    src: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&h=400&fit=crop",
+    alt: "International Student Life",
+    caption: "Student Life Abroad"
+  },
+  {
+    src: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&h=400&fit=crop",
+    alt: "Students collaborating",
+    caption: "Global Education Community"
+  }
+]
+
 export function HeroSection() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length)
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % carouselImages.length)
+  }
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length)
+  }
   return (
     <section className="relative min-h-screen flex items-center gradient-hero">
       <div className="container mx-auto px-4 py-20">
@@ -14,22 +54,21 @@ export function HeroSection() {
             </div>
             
             <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-              Study in Germany—
-              <span className="text-secondary block">with expert-backed support</span>
+              Start Your Global Education Journey
+              <span className="text-secondary block">with UNI 360°</span>
             </h1>
             
             <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
-              From documents to degree—UNI 360° simplifies your path. 
-              Get personalized guidance, APS support, and visa assistance all in one place.
+              Explore top universities, secure admissions, and build your future abroad with comprehensive guidance every step of the way.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="btn-tiger-eye group">
-                Explore Universities
+              <Button size="lg" className="btn-tiger-eye group hover:scale-105 transition-all duration-300">
+                Book One-on-One Call
                 <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button variant="outline" size="lg" className="border-primary hover:bg-primary hover:text-primary-foreground">
-                Book a Call
+              <Button variant="outline" size="lg" className="border-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-300">
+                Get Personalised Recommendations
               </Button>
             </div>
             
@@ -50,13 +89,52 @@ export function HeroSection() {
           </div>
           
           <div className="relative">
-            <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-              <img 
-                src={heroImage} 
-                alt="Students studying in Germany" 
-                className="w-full h-auto object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
+            <div className="relative overflow-hidden rounded-2xl shadow-2xl group">
+              <div className="relative h-96 w-full">
+                {carouselImages.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image.src}
+                    alt={image.alt}
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
+                      index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  />
+                ))}
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
+                
+                {/* Carousel Controls */}
+                <button
+                  onClick={prevImage}
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+                
+                {/* Carousel Indicators */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                  {carouselImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+                
+                {/* Caption */}
+                <div className="absolute bottom-4 left-4 bg-black/50 text-white px-3 py-1 rounded-lg text-sm">
+                  {carouselImages[currentImageIndex].caption}
+                </div>
+              </div>
             </div>
             <div className="absolute -bottom-6 -left-6 bg-card p-4 rounded-xl shadow-lg border">
               <div className="flex items-center gap-3">

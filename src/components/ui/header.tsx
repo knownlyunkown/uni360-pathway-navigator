@@ -1,17 +1,27 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, GraduationCap, Phone } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Menu, GraduationCap, Phone, ChevronDown } from "lucide-react"
+import { useCountry } from "@/context/CountryContext"
+import { Link, useLocation } from "react-router-dom"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const { selectedCountry, setSelectedCountry, showWorkInGermany } = useCountry()
+  const location = useLocation()
 
   const navigation = [
-    { name: "Universities", href: "#universities" },
-    { name: "How It Works", href: "#how-it-works" },
-    { name: "Why Us", href: "#why-us" },
-    { name: "Success Stories", href: "#testimonials" },
-    { name: "Contact", href: "#contact" }
+    { name: "Universities", href: "/universities" },
+    { name: "Services", href: "/services" },
+    ...(showWorkInGermany ? [{ name: "Work in Germany 🇩🇪", href: "/work-in-germany", highlight: true }] : []),
+    { name: "About", href: "/about" }
+  ]
+
+  const countryOptions = [
+    { value: "germany", label: "🇩🇪 Germany", flag: "🇩🇪" },
+    { value: "uk", label: "🇬🇧 UK", flag: "🇬🇧" },
+    { value: "both", label: "🌍 Both", flag: "🌍" }
   ]
 
   return (
@@ -19,23 +29,45 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <div className="flex items-center justify-center w-8 h-8 bg-secondary rounded-lg">
               <GraduationCap className="w-5 h-5 text-secondary-foreground" />
             </div>
             <span className="font-bold text-xl">UNI 360°</span>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-1">
+            {/* Country Selector */}
+            <Select value={selectedCountry} onValueChange={(value: any) => setSelectedCountry(value)}>
+              <SelectTrigger className="w-auto border-none bg-transparent hover:bg-accent">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {countryOptions.map((country) => (
+                  <SelectItem key={country.value} value={country.value}>
+                    {country.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             {navigation.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                to={item.href}
+                className={`px-4 py-2 text-sm font-medium transition-colors rounded-md ${
+                  location.pathname === item.href
+                    ? 'text-foreground bg-accent'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                } ${
+                  item.highlight 
+                    ? 'text-tiger-eye hover:text-tiger-eye animate-pulse font-semibold' 
+                    : ''
+                }`}
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -69,16 +101,41 @@ export function Header() {
                   <span className="font-bold text-xl">UNI 360°</span>
                 </div>
 
+                {/* Mobile Country Selector */}
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Select Country</label>
+                  <Select value={selectedCountry} onValueChange={(value: any) => setSelectedCountry(value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countryOptions.map((country) => (
+                        <SelectItem key={country.value} value={country.value}>
+                          {country.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <nav className="flex flex-col gap-4">
                   {navigation.map((item) => (
-                    <a
+                    <Link
                       key={item.name}
-                      href={item.href}
-                      className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                      to={item.href}
+                      className={`text-sm font-medium transition-colors ${
+                        location.pathname === item.href
+                          ? 'text-foreground'
+                          : 'text-muted-foreground hover:text-foreground'
+                      } ${
+                        item.highlight 
+                          ? 'text-tiger-eye hover:text-tiger-eye animate-pulse font-semibold' 
+                          : ''
+                      }`}
                       onClick={() => setIsOpen(false)}
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </nav>
 
