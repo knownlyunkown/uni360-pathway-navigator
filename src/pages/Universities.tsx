@@ -55,15 +55,15 @@ const allUniversities = [
 export default function Universities() {
   const { selectedCountry } = useCountry()
   const [searchTerm, setSearchTerm] = useState("")
-  const [courseFilter, setCourseFilter] = useState("")
-  const [countryFilter, setCountryFilter] = useState("")
+  const [courseFilter, setCourseFilter] = useState("all")
+  const [countryFilter, setCountryFilter] = useState("all")
 
   const filteredUniversities = allUniversities.filter(uni => {
     const matchesSearch = uni.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          uni.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          uni.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
     
-    const matchesCountry = !countryFilter || uni.country === countryFilter ||
+    const matchesCountry = countryFilter === "all" || uni.country === countryFilter ||
                           (selectedCountry === 'both' && (uni.country === 'germany' || uni.country === 'uk'))
     
     return matchesSearch && matchesCountry
@@ -103,7 +103,7 @@ export default function Universities() {
                     <SelectValue placeholder="Country" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All</SelectItem>
+                    <SelectItem value="all">All</SelectItem>
                     <SelectItem value="germany">🇩🇪 Germany</SelectItem>
                     <SelectItem value="uk">🇬🇧 UK</SelectItem>
                   </SelectContent>
@@ -114,7 +114,7 @@ export default function Universities() {
                     <SelectValue placeholder="Course" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All</SelectItem>
+                    <SelectItem value="all">All</SelectItem>
                     <SelectItem value="engineering">Engineering</SelectItem>
                     <SelectItem value="medicine">Medicine</SelectItem>
                     <SelectItem value="business">Business</SelectItem>
