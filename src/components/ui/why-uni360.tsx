@@ -10,19 +10,14 @@ import {
   Clock,
   Star
 } from "lucide-react"
+import { useCountry } from "@/context/CountryContext"
 
-const features = [
+const commonFeatures = [
   {
     icon: FileCheck,
     title: "Document Tracking",
     description: "Real-time status updates on all your application documents with secure cloud storage.",
     badge: "Secure"
-  },
-  {
-    icon: Shield,
-    title: "APS Support",
-    description: "Complete APS application assistance with expert review and submission guidance.",
-    badge: "Expert Guided"
   },
   {
     icon: Bot,
@@ -35,12 +30,6 @@ const features = [
     title: "Visa Readiness",
     description: "Step-by-step visa preparation with appointment booking and documentation support.",
     badge: "Fast Track"
-  },
-  {
-    icon: CreditCard,
-    title: "Blocked Account",
-    description: "Simplified blocked account setup with partner banks for visa requirements.",
-    badge: "Bank Partner"
   },
   {
     icon: Users,
@@ -57,19 +46,79 @@ const features = [
   {
     icon: Star,
     title: "Success Guarantee",
-    description: "95% visa success rate with personalized mentorship throughout your journey.",
+    description: "95% success rate with personalized mentorship throughout your journey.",
     badge: "Proven Results"
   }
 ]
 
+const germanyFeatures = [
+  {
+    icon: Shield,
+    title: "APS Support",
+    description: "Complete APS application assistance with expert review and submission guidance.",
+    badge: "Expert Guided"
+  },
+  {
+    icon: CreditCard,
+    title: "Blocked Account",
+    description: "Simplified blocked account setup with partner banks for visa requirements.",
+    badge: "Bank Partner"
+  }
+]
+
+const ukFeatures = [
+  {
+    icon: Shield,
+    title: "UCAS Support",
+    description: "Complete UCAS application assistance and direct university application guidance.",
+    badge: "Expert Guided"
+  },
+  {
+    icon: CreditCard,
+    title: "Financial Planning",
+    description: "Assistance with financial requirements, scholarships, and funding options for UK studies.",
+    badge: "Financial Expert"
+  }
+]
+
 export function WhyUni360() {
+  const { selectedCountry } = useCountry()
+
+  const getFeatures = () => {
+    switch (selectedCountry) {
+      case 'germany':
+        return [...commonFeatures, ...germanyFeatures]
+      case 'uk':
+        return [...commonFeatures, ...ukFeatures]
+      case 'both':
+        return [...commonFeatures, ...germanyFeatures, ...ukFeatures]
+      default:
+        return [...commonFeatures, ...germanyFeatures, ...ukFeatures]
+    }
+  }
+
+  const getDescription = () => {
+    switch (selectedCountry) {
+      case 'germany':
+        return "We provide end-to-end support for your German study abroad journey with cutting-edge technology and expert guidance."
+      case 'uk':
+        return "We provide comprehensive support for your UK study abroad journey with innovative tools and dedicated expert guidance."
+      case 'both':
+        return "We provide complete support for your international study abroad journey to Germany and UK with cutting-edge technology and expert guidance."
+      default:
+        return "We provide complete support for your international study abroad journey to Germany and UK with cutting-edge technology and expert guidance."
+    }
+  }
+
+  const features = getFeatures()
+
   return (
     <section className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">Why Choose UNI 360°?</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            We provide end-to-end support for your German study abroad journey with cutting-edge technology and expert guidance.
+            {getDescription()}
           </p>
         </div>
 
